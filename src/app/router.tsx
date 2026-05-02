@@ -1,6 +1,8 @@
 // src/app/router.tsx
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./Layout";
+import { Projects } from "../pages/Projects/Projects";
+import { CreateProject } from "../pages/Projects/CreateProject/CreateProject";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +17,15 @@ const router = createBrowserRouter([
     path: "/projects",
     element: (
       <Layout>
-        <div>Projects</div>
+        <Projects />
+      </Layout>
+    ),
+  },
+  {
+    path: "/projects/create",
+    element: (
+      <Layout>
+        <CreateProject />
       </Layout>
     ),
   },
