@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================
+   THEME VARIABLES
+========================= */
+
 :root {
   --color-bg: 255 255 255;
   --color-surface: 245 245 245;
@@ -25,6 +29,41 @@
   --color-danger: 248 113 113;
 }
 
+/* =========================
+   BASE STYLES
+========================= */
+
 body {
-  @apply bg-bg text-text;
+  background-color: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+/* =========================
+   CUSTOM UTILITIES (OPTIONAL)
+========================= */
+
+@layer utilities {
+  .bg-bg {
+    background-color: rgb(var(--color-bg) / 1);
+  }
+
+  .bg-surface {
+    background-color: rgb(var(--color-surface) / 1);
+  }
+
+  .text-text {
+    color: rgb(var(--color-text) / 1);
+  }
+
+  .text-muted {
+    color: rgb(var(--color-muted) / 1);
+  }
+
+  .border-border {
+    border-color: rgb(var(--color-border) / 1);
+  }
 }

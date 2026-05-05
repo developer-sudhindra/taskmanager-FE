@@ -1,6 +1,10 @@
 // src/app/router.tsx
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./Layout";
+import { Projects } from "../pages/Projects/Projects";
+import { CreateProject } from "../pages/Projects/CreateProject/CreateProject";
+import { CreateTask } from "../pages/Projects/CreateTask/createTask";
+import { ProjectDetails } from "../pages/Projects/ProjectDetails/ProjectDetails";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +19,31 @@ const router = createBrowserRouter([
     path: "/projects",
     element: (
       <Layout>
-        <div>Projects</div>
+        <Projects />
+      </Layout>
+    ),
+  },
+  {
+    path: "/projects/:projectId",
+    element: (
+      <Layout>
+        <ProjectDetails />
+      </Layout>
+    ),
+  },
+  {
+    path: "/projects/create",
+    element: (
+      <Layout>
+        <CreateProject />
+      </Layout>
+    ),
+  },
+  {
+    path: "/projects/:projectId/tasks/create",
+    element: (
+      <Layout>
+        <CreateTask />
       </Layout>
     ),
   },
