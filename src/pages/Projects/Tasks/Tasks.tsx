@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { TaskCard } from "../TaskCard/TaskCard";
+import { useNavigate } from "react-router-dom";
+import { getAllTask } from "../project.service";
 
 interface TasksProps {
   projectId: string;
@@ -7,13 +9,18 @@ interface TasksProps {
 
 export const Tasks = ({ projectId }: TasksProps) => {
   const [tasks, setTasks] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
-    fetch(`http://localhost:3000/tasks/project/${projectId}`)
+    getAllTask(projectId)
       .then((response) => response.json())
       .then((data) => {
         setTasks(data);
       });
   }, [projectId]);
+
+  const redirectToTaskDetails = (taskId) => {
+    navigate(`/projects/${projectId}/tasks/${taskId}`);
+  };
 
   return (
     <div className="grid grid-cols-3 gap-3">
@@ -23,7 +30,9 @@ export const Tasks = ({ projectId }: TasksProps) => {
           .filter((task) => task.status === "OPEN")
           .map((task) => (
             <TaskCard
+              onSelectTask={redirectToTaskDetails}
               key={task.id}
+              id={task.id}
               title={task.title}
               description={task.description}
             />
@@ -35,7 +44,9 @@ export const Tasks = ({ projectId }: TasksProps) => {
           .filter((task) => task.status === "IN_PROGRESS")
           .map((task) => (
             <TaskCard
+              onSelectTask={redirectToTaskDetails}
               key={task.id}
+              id={task.id}
               title={task.title}
               description={task.description}
             />
@@ -47,7 +58,9 @@ export const Tasks = ({ projectId }: TasksProps) => {
           .filter((task) => task.status === "DONE")
           .map((task) => (
             <TaskCard
+              onSelectTask={redirectToTaskDetails}
               key={task.id}
+              id={task.id}
               title={task.title}
               description={task.description}
             />

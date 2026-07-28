@@ -1,69 +1,129 @@
-import { useState } from "react";
+import { useEffect, useActionState } from "react";
 import { Button } from "../../../shared/ui/button/button";
 import { Input } from "../../../shared/ui/Input/Input";
 import { Textarea } from "../../../shared/ui/Textarea/Textarea";
 import { PageTitle } from "../../../shared/ui/PageTitle/PageTitle";
 import { useNavigate } from "react-router-dom";
+import { createProjectAPI } from "../project.service";
+
+interface CreateProjectState {
+  success: boolean;
+  values: {
+    projectName: string;
+    projectNameError: string;
+    description: string;
+    descriptionError: string;
+  };
+}
+
+const createProjectInitialState: CreateProjectState = {
+  success: false,
+  values: {
+    projectName: "",
+    projectNameError: "",
+    description: "",
+    descriptionError: "",
+  },
+};
+
+const updateFormAction = async (
+  previousState: CreateProjectState,
+  formData: FormData,
+) => {
+  const projectName = formData.get("projectName") as string;
+  const projetDescription = formData.get("description") as string;
+
+  const errors = {
+    projectNameError: "",
+    descriptionError: "",
+  };
+
+  if (projectName.length < 2) {
+    errors.projectNameError = "Invalid project name";
+  }
+
+  if (projetDescription.length < 2) {
+    errors.descriptionError = "Invalid project description";
+  }
+
+  if (Object.values(errors).some(Boolean)) {
+    return {
+      success: false,
+      values: {
+        projectName: projectName,
+        description: projetDescription,
+        ...errors,
+      },
+    };
+  }
+
+  try {
+    const payload = {
+      name: projectName,
+      description: projetDescription,
+    };
+
+    const response = await createProjectAPI(payload);
+
+    if (!response.ok) {
+      return {
+        success: false,
+        values: {
+          projectName: projectName,
+          description: projetDescription,
+          projectNameError: "",
+          descriptionError: "Failed to create project",
+        },
+      };
+    }
+
+    return {
+      success: true,
+      values: {
+        projectName: projectName,
+        description: projetDescription,
+        projectNameError: "",
+        descriptionError: "",
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      values: {
+        projectName: projectName,
+        description: projetDescription,
+        projectNameError: "",
+        descriptionError: "Failed to create project",
+      },
+    };
+  }
+};
+
 export const CreateProject = () => {
   const navigate = useNavigate();
+  const [state, updateAction, isPending] = useActionState(
+    updateFormAction,
+    createProjectInitialState,
+  );
 
-  const [projectName, setProjectName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const redirectToPath = (path: string) => {
-    navigate(path);
-  };
-
-  const resetForm = () => {
-    setProjectName("");
-    setDescription("");
-  };
-
-  const updateInput = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    if (name === "projectName") {
-      setProjectName(value);
-    } else if (name === "description") {
-      setDescription(value);
+  useEffect(() => {
+    if (state.success) {
+      navigate("/projects");
     }
-  };
+  }, [state.success]);
 
-  const createProject = () => {
-    fetch("http://localhost:3000/project", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: projectName,
-        description: description,
-      }),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then(() => {
-        resetForm();
-        redirectToPath("/projects");
-      })
-      .catch((error) => {
-        console.error("Error creating project:", error);
-      });
-  };
-  9;
   return (
-    <div>
+    <>
       <PageTitle>Create New Project</PageTitle>
-      <form>
+      {state.values.projectNameError}
+      {state.values.descriptionError}
+      <form action={updateAction}>
         <div className="mb-6">
           <label>Project Name</label>
           <Input
             placeholder="Project Name"
             name="projectName"
-            value={projectName}
-            onChange={updateInput}
+            defaultValue={state.values.projectName}
           />
         </div>
         <div className="mb-6">
@@ -71,22 +131,22 @@ export const CreateProject = () => {
           <Textarea
             placeholder="Project Description"
             name="description"
-            value={description}
-            onChange={updateInput}
+            defaultValue={state.values.description}
           />
         </div>
         <div className="flex justify-end gap-4">
           <Button
-            onClick={() => redirectToPath("/projects")}
+            type="button"
+            onClick={() => navigate("/projects")}
             variant="secondary"
           >
             Cancel
           </Button>
-          <Button onClick={createProject} variant="primary">
+          <Button type="submit" disabled={isPending} variant="primary">
             Create
           </Button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
