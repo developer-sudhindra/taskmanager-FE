@@ -1,20 +1,24 @@
-// src/shared/ui/Sidebar.tsx
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-
-const navItems = [
-  { name: "Dashboard", path: "/" },
-  { name: "Projects", path: "/projects" },
-  { name: "Calendar", path: "/calendar" },
-  { name: "Settings", path: "/settings" },
-];
+import { getMenu } from "./service";
 
 export default function Sidebar() {
-  return (
-    <aside className="hidden md:flex flex-col w-64 bg-surface border-r border-border p-4">
-      <h2 className="text-lg font-bold mb-6">TaskFlow</h2>
+  const [menuItems, setMenuItems] = useState([]);
+  useEffect(() => {
+    getMenu()
+      .then((response) => response.json())
+      .then((data) => {
+        setMenuItems(data.menuItems);
+      });
+  }, []);
 
-      <nav className="flex flex-col gap-2">
-        {navItems.map((item) => (
+  return (
+    <aside className="hidden md:flex flex-col w-64 h-screen bg-surface border-r border-border">
+      <h2 className="text-lg font-bold mb-6 p-4 border-b border-border">
+        TaskFlow
+      </h2>
+      <nav className="flex flex-col gap-2 p-4">
+        {menuItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
@@ -30,6 +34,18 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+      <div className="mt-auto p-4 border-t border-border">
+        <NavLink
+          to={"/settings"}
+          className={({ isActive }) =>
+            `px-3 py-2 rounded-md text-sm transition ${
+              isActive ? "bg-primary text-white" : "text-text hover:bg-surface"
+            }`
+          }
+        >
+          Settings
+        </NavLink>
+      </div>
     </aside>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../../../shared/ui/button/button";
 import { Tasks } from "../Tasks/Tasks";
+import { getProjectDetails } from "../project.service";
 
 export const ProjectDetails = () => {
   const { projectId } = useParams();
@@ -9,7 +10,7 @@ export const ProjectDetails = () => {
   const [project, setProject] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/project/${projectId}`)
+    getProjectDetails(projectId)
       .then((response) => response.json())
       .then((data) => setProject(data));
   }, []);
@@ -32,7 +33,7 @@ export const ProjectDetails = () => {
           Create Task
         </Button>
       </div>
-      {/* <div className="border border-surface rounded-md p-4 flex flex-row align-center justify-start gap-[30px]">
+      <div className="border border-surface rounded-md p-4 flex flex-row align-center justify-start gap-[30px]">
         <div>
           <div className="text-[12px] text-[grey]">Name:</div>
           <div className="mb-[15px]">{project?.name}</div>
@@ -41,7 +42,7 @@ export const ProjectDetails = () => {
           <div className="text-[12px] text-[grey]">Status:</div>
           <div className="mb-[15px]">{"Active"}</div>
         </div>
-      </div> */}
+      </div>
       <Tasks projectId={projectId} />
     </>
   );

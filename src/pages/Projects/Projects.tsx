@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../../shared/ui/button/button";
 import { useNavigate } from "react-router-dom";
 import { ProjectCards } from "./ProjectCards/ProjectCards";
+import { getAllProjectsAPI } from "./project.service";
 
 export const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -20,7 +21,7 @@ export const Projects = () => {
   };
 
   const getAllProjects = () => {
-    fetch("http://localhost:3000/project")
+    getAllProjectsAPI()
       .then((response) => response.json())
       .then((data) => {
         setProjects(data);

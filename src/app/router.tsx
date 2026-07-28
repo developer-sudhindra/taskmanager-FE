@@ -5,6 +5,11 @@ import { Projects } from "../pages/Projects/Projects";
 import { CreateProject } from "../pages/Projects/CreateProject/CreateProject";
 import { CreateTask } from "../pages/Projects/CreateTask/createTask";
 import { ProjectDetails } from "../pages/Projects/ProjectDetails/ProjectDetails";
+import { UpdateTask } from "../pages/Projects/UpdateTask/UpdateTask";
+import { Login } from "../pages/Auth/Login/Login";
+import { Register } from "../pages/Auth/Register/Register";
+import { UpdatePassword } from "../pages/Auth/UpdatePassword/UpdatePassword";
+import { Settings } from "../pages/Settings/Settings";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +19,18 @@ const router = createBrowserRouter([
         <div>Dashboard</div>
       </Layout>
     ),
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/update-password",
+    element: <UpdatePassword />,
   },
   {
     path: "/projects",
@@ -48,6 +65,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/projects/:projectId/tasks/:taskId",
+    element: (
+      <Layout>
+        <UpdateTask />
+      </Layout>
+    ),
+  },
+  {
     path: "/calendar",
     element: (
       <Layout>
@@ -59,7 +84,7 @@ const router = createBrowserRouter([
     path: "/settings",
     element: (
       <Layout>
-        <div>Settings</div>
+        <Settings />
       </Layout>
     ),
   },
