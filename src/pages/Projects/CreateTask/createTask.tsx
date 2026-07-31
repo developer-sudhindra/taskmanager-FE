@@ -1,11 +1,11 @@
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useCallback } from "react";
 import { Button } from "../../../shared/ui/button/button";
 import { Input } from "../../../shared/ui/Input/Input";
 import { Textarea } from "../../../shared/ui/Textarea/Textarea";
 import { PageTitle } from "../../../shared/ui/PageTitle/PageTitle";
 import { useParams, useNavigate } from "react-router-dom";
 import { Select } from "../../../shared/ui/Select/Select";
-import { createTask } from "../project.service";
+import { useCreateTask } from "../../../hooks/useTasks";
 
 type Priority = "LOW" | "MEDIUM" | "HIGH";
 
@@ -35,105 +35,97 @@ const createProjectInitalState: CreateTaskStage = {
   },
 };
 
-const formAction = async (
-  projectId: string | undefined,
-  previousState: CreateTaskStage,
-  formData: FormData,
-) => {
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const priority = formData.get("priority") as string;
-  const taskType = formData.get("type") as string;
-
-  const errors = {
-    titleError: "",
-    descriptionError: "",
-  };
-
-  if (title.length < 3) {
-    errors.titleError = "Title must be greater than 3 character";
-  }
-
-  if (description.trim().length < 3) {
-    errors.descriptionError = "description shoul be greater than 3 characters";
-  }
-
-  if (Object.values(errors).some(Boolean)) {
-    return {
-      success: false,
-      values: {
-        title: title,
-        description: description,
-        priority: priority,
-        type: taskType,
-        ...errors,
-      },
-    };
-  }
-
-  try {
-    const payload = {
-      title: title,
-      description: description,
-      status: "OPEN",
-      projectId: projectId,
-      priority: priority,
-      type: taskType,
-      labels: [
-        {
-          name: "New Label",
-        },
-      ],
-    };
-
-    const response = await createTask(payload);
-
-    if (!response.ok) {
-      return {
-        success: false,
-        values: {
-          title: title,
-          description: description,
-          priority: priority,
-          type: taskType,
-          titleError: "Failed to create task",
-          descriptionError: "",
-        },
-      };
-    }
-
-    return {
-      success: true,
-      values: {
-        title: title,
-        description: description,
-        priority: priority,
-        type: taskType,
-        titleError: "",
-        descriptionError: "",
-      },
-    };
-  } catch (error) {
-    return {
-      success: false,
-      values: {
-        title: title,
-        description: description,
-        priority: priority,
-        type: taskType,
-        titleError: "Failed to create task",
-        descriptionError: "",
-      },
-    };
-  }
-};
-
 export const CreateTask = () => {
   const { projectId } = useParams();
+  const { mutateAsync, isPending: isMutating } = useCreateTask();
   const navigate = useNavigate();
+
+  const formAction = useCallback(
+    async (
+      projectId: string | undefined,
+      previousState: CreateTaskStage,
+      formData: FormData,
+    ) => {
+      const title = formData.get("title") as string;
+      const description = formData.get("description") as string;
+      const priority = formData.get("priority") as string;
+      const taskType = formData.get("type") as string;
+
+      const errors = {
+        titleError: "",
+        descriptionError: "",
+      };
+
+      if (title.length < 3) {
+        errors.titleError = "Title must be greater than 3 character";
+      }
+
+      if (description.trim().length < 3) {
+        errors.descriptionError =
+          "description shoul be greater than 3 characters";
+      }
+
+      if (Object.values(errors).some(Boolean)) {
+        return {
+          success: false,
+          values: {
+            title: title,
+            description: description,
+            priority: priority,
+            type: taskType,
+            ...errors,
+          },
+        };
+      }
+
+      try {
+        const payload = {
+          title: title,
+          description: description,
+          status: "OPEN",
+          projectId: projectId,
+          priority: priority,
+          type: taskType,
+          labels: [
+            {
+              name: "New Label",
+            },
+          ],
+        };
+
+        await mutateAsync(payload);
+
+        return {
+          success: true,
+          values: {
+            title: title,
+            description: description,
+            priority: priority,
+            type: taskType,
+            titleError: "",
+            descriptionError: "",
+          },
+        };
+      } catch (error) {
+        return {
+          success: false,
+          values: {
+            title: title,
+            description: description,
+            priority: priority,
+            type: taskType,
+            titleError: "Failed to create task",
+            descriptionError: "",
+          },
+        };
+      }
+    },
+    [],
+  );
+
   const boundFormAction = formAction.bind(null, projectId);
 
-  const [state, createFormAction, isPending] = useActionState(
+  const [state, createFormAction, isActionPending] = useActionState(
     boundFormAction,
     createProjectInitalState,
   );
@@ -143,6 +135,8 @@ export const CreateTask = () => {
       navigate(`/projects/${projectId}`);
     }
   }, [state.success]);
+
+  const isPending = isMutating || isActionPending;
 
   return (
     <div className="border border-surface rounded-md p-[16px]">

@@ -5,56 +5,77 @@ import { Textarea } from "../../../shared/ui/Textarea/Textarea";
 import { Select } from "../../../shared/ui/Select/Select";
 import { PageTitle } from "../../../shared/ui/PageTitle/PageTitle";
 import { useParams, useNavigate } from "react-router-dom";
+
 import {
-  findOneTask,
-  updateTaskAPI,
-  deleteTaskService,
-} from "../project.service";
+  useGetOneTask,
+  useUpdateTask,
+  useDeleteTask,
+} from "../../../hooks/useTasks";
+
 export const UpdateTask = () => {
   const { taskId } = useParams();
-  const [task, setTask] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    findOneTask(taskId)
-      .then((response) => response.json())
-      .then((data) => {
-        setTask(data);
-      });
-  }, []);
 
-  const updateTaskObj = (event) => {
+  const { mutateAsync: updateTaskMutation, isPending: isUpdating } =
+    useUpdateTask();
+  const { data: taskData, isLoading } = useGetOneTask(taskId);
+  const { mutate: deleteTaskMutate, isPending: isDeleting } = useDeleteTask();
+
+  const [task, setTask] = useState<any>(null);
+
+  useEffect(() => {
+    if (taskData) {
+      setTask(taskData);
+    }
+  }, [taskData]);
+
+  const updateTaskObj = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = event.target;
     setTask((prevTask) => ({ ...prevTask, [name]: value }));
   };
 
-  const updateTask = () => {
+  const handleUpdateTask = async () => {
+    if (!taskId || !task) return;
     const updatedTask = {
       ...task,
-      labels: [
-        {
-          name: "New update Label",
-        },
-      ],
+      labels: [{ name: "New update Label" }],
     };
-    updateTaskAPI(taskId, updatedTask)
-      .then((response) => response.json())
-      .then((data) => {
-        navigate(`/projects/${data.projectId}`);
-      });
+    try {
+      await updateTaskMutation({ taskId, payload: updatedTask });
+      navigate(-1);
+    } catch (error) {
+      console.error("Failed to update task", error);
+    }
   };
 
   const deleteTask = () => {
-    deleteTaskService(taskId).then(() => {
-      navigate(-1);
-    });
+    if (!task || !taskId) return;
+    try {
+      deleteTaskMutate(taskId);
+    } catch (error) {
+      console.log(`Failed while deleteing the task`, error);
+    }
   };
+
+  if (isLoading || !task) return <div>Loading task data...</div>;
+
+  const isPending = isUpdating || isDeleting;
 
   return (
     <div>
       <div className="flex flex-row align-center justify-between mb-[30px]">
         <PageTitle>Update Task</PageTitle>
         <div>
-          <Button type="button" variant="danger" onClick={deleteTask}>
+          <Button
+            disabled={isPending}
+            type="button"
+            variant="danger"
+            onClick={deleteTask}
+          >
             Delete Task
           </Button>
         </div>
@@ -94,7 +115,12 @@ export const UpdateTask = () => {
           <option value="DOCUMENTATION">Documentation</option>
         </Select>
         <div className="flex items-center justify-end gap-3 mt-[15px]">
-          <Button variant="primary" onClick={updateTask} type="button">
+          <Button
+            disabled={isPending}
+            variant="primary"
+            onClick={handleUpdateTask}
+            type="button"
+          >
             Update Task
           </Button>
           <Button variant="outline" onClick={() => navigate(-1)} type="button">
