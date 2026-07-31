@@ -1,9 +1,9 @@
 import { type FC } from "react";
 import { ProgressBar } from "../../../shared/ui/ProgressBar/ProgressBar";
 interface ProjectCardsProps {
-  onSelectProject: (projectId: number) => void;
+  onSelectProject: (projectId: string) => void;
   project: {
-    id: number;
+    id: string;
     name: string;
     description: string;
   };
