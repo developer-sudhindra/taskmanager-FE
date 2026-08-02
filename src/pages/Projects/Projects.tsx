@@ -2,16 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../shared/ui/button/button";
 import { ProjectCards } from "./ProjectCards/ProjectCards";
 import {
-  useProjects,
-  usePrefetchProjectDetails,
-} from "../../hooks/useProjects";
+  useGetAllProjectsQuery,
+  usePrefetch,
+} from "../../features/project/projectApi";
 
 export const Projects = () => {
   const navigate = useNavigate();
 
-  const { data, isLoading } = useProjects();
-
-  const prefetchProjectDetail = usePrefetchProjectDetails();
+  const { data, isLoading } = useGetAllProjectsQuery();
+  const prefetchProjectDetails = usePrefetch("getProjectDetails");
 
   const redirectToCreateProject = () => {
     navigate("/projects/create");
@@ -37,7 +36,7 @@ export const Projects = () => {
           data.map((project) => (
             <span
               onMouseEnter={() => {
-                prefetchProjectDetail(project.id);
+                prefetchProjectDetails(project.id, { force: false });
               }}
             >
               <ProjectCards

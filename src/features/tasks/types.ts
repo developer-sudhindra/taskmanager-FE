@@ -14,3 +14,21 @@ export interface Task {
   type: TaskType;
   storyPoints: number;
 }
+// src/features/tasks/types.ts
+export interface ITask {
+  id: string;
+  title: string;
+  description: string;
+  status: "OPEN" | "IN_PROGRESS" | "DONE";
+  priority: "LOW" | "MEDIUM" | "HIGH";
+  type: "FEATURE" | "BUG" | "TASK" | "DOCUMENTATION";
+}
+
+export interface ICreateTaskPayload {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  type: string;
+  projectId: string;
+}

@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { TaskCard } from "../TaskCard/TaskCard";
 import {
-  useGetAllTasks,
-  usePrefetchTaskDetails,
-} from "../../../hooks/useTasks";
+  useGetAllTasksQuery,
+  usePrefetch,
+} from "../../../features/tasks/tasksApi";
+import { skipToken } from "@reduxjs/toolkit/query/react";
 
 interface TasksProps {
   projectId: string;
@@ -12,9 +13,15 @@ interface TasksProps {
 export const Tasks = ({ projectId }: TasksProps) => {
   const navigate = useNavigate();
 
-  const { data, isLoading } = useGetAllTasks(projectId);
+  // const { data, isLoading } = useGetAllTasks(projectId);
+  console.log("projectId", projectId, !projectId);
+  const {
+    data: response,
+    isLoading,
+    error,
+  } = useGetAllTasksQuery(projectId ?? skipToken);
 
-  const prefetchTaskDetails = usePrefetchTaskDetails();
+  const prefetchTaskDetails = usePrefetch("getOneTask");
 
   const redirectToTaskDetails = (taskId) => {
     navigate(`/projects/${projectId}/tasks/${taskId}`);
@@ -24,14 +31,22 @@ export const Tasks = ({ projectId }: TasksProps) => {
     return <div>Loading...</div>;
   }
 
+  if (error) {
+    return <div>Some error</div>;
+  }
+
   return (
     <div className="grid grid-cols-3 gap-3">
       <div className="min-h-svh bg-surface rounded-md p-[16px]">
         <div className="font-bold mb-3 text-center">TO DO</div>
-        {data
+        {response?.data
           ?.filter((task) => task.status === "OPEN")
           .map((task) => (
-            <span onMouseEnter={() => prefetchTaskDetails(task.id)}>
+            <span
+              onMouseEnter={() =>
+                prefetchTaskDetails(task.id, { force: false })
+              }
+            >
               <TaskCard
                 onSelectTask={redirectToTaskDetails}
                 key={task.id}
@@ -44,10 +59,14 @@ export const Tasks = ({ projectId }: TasksProps) => {
       </div>
       <div className="min-h-svh bg-surface rounded-md p-[16px]">
         <div className="font-bold mb-3 text-center">IN PROGRESS</div>
-        {data
+        {response?.data
           ?.filter((task) => task.status === "IN_PROGRESS")
           .map((task) => (
-            <span onMouseEnter={() => prefetchTaskDetails(task.id)}>
+            <span
+              onMouseEnter={() =>
+                prefetchTaskDetails(task.id, { force: false })
+              }
+            >
               <TaskCard
                 onSelectTask={redirectToTaskDetails}
                 key={task.id}
@@ -60,10 +79,14 @@ export const Tasks = ({ projectId }: TasksProps) => {
       </div>
       <div className="min-h-svh bg-surface rounded-md p-[16px]">
         <div className="font-bold mb-3 text-center">DONE</div>
-        {data
+        {response?.data
           ?.filter((task) => task.status === "DONE")
           .map((task) => (
-            <span onMouseEnter={() => prefetchTaskDetails(task.id)}>
+            <span
+              onMouseEnter={() =>
+                prefetchTaskDetails(task.id, { force: false })
+              }
+            >
               <TaskCard
                 onSelectTask={redirectToTaskDetails}
                 key={task.id}

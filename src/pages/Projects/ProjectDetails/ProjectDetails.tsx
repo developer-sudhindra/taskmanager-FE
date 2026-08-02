@@ -2,12 +2,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../../../shared/ui/button/button";
 import { Tasks } from "../Tasks/Tasks";
 import { useGetProjectDetails } from "../../../hooks/useProjects";
+import { useGetProjectDetailsQuery } from "../../../features/project/projectApi";
 
 export const ProjectDetails = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   // const [project, setProject] = useState(null);
-  const { data, isLoading } = useGetProjectDetails(projectId);
+  const { data, isLoading } = useGetProjectDetailsQuery(projectId, {
+    skip: !!projectId,
+  });
 
   const redirectToProjects = () => {
     navigate("/projects");

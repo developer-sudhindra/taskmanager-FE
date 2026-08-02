@@ -6,6 +6,7 @@ import { PageTitle } from "../../../shared/ui/PageTitle/PageTitle";
 import { useParams, useNavigate } from "react-router-dom";
 import { Select } from "../../../shared/ui/Select/Select";
 import { useCreateTask } from "../../../hooks/useTasks";
+import { useCreateTaskMutation } from "../../../features/tasks/tasksApi";
 
 type Priority = "LOW" | "MEDIUM" | "HIGH";
 
@@ -37,7 +38,8 @@ const createProjectInitalState: CreateTaskStage = {
 
 export const CreateTask = () => {
   const { projectId } = useParams();
-  const { mutateAsync, isPending: isMutating } = useCreateTask();
+  const [createTaskMutation, { isLoading: isMutating }] =
+    useCreateTaskMutation();
   const navigate = useNavigate();
 
   const formAction = useCallback(
@@ -93,7 +95,7 @@ export const CreateTask = () => {
           ],
         };
 
-        await mutateAsync(payload);
+        await createTaskMutation(payload).unwrap();
 
         return {
           success: true,
