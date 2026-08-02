@@ -4,8 +4,7 @@ import { Input } from "../../../shared/ui/Input/Input";
 import { Textarea } from "../../../shared/ui/Textarea/Textarea";
 import { PageTitle } from "../../../shared/ui/PageTitle/PageTitle";
 import { useNavigate } from "react-router-dom";
-// import { createProjectAPI } from "../project.service";
-import { useCreateProject } from "../../../hooks/useProjects";
+import { useCreateProjectMutation } from "../../../features/project/projectApi";
 
 interface CreateProjectState {
   success: boolean;
@@ -29,7 +28,9 @@ const createProjectInitialState: CreateProjectState = {
 
 export const CreateProject = () => {
   const navigate = useNavigate();
-  const { mutateAsync, isPending: isMutating } = useCreateProject();
+  // const { mutateAsync, isPending: isMutating } = useCreateProject();
+  const [createProjectMutation, { isLoading: isMutating }] =
+    useCreateProjectMutation();
   const baseId = useId();
 
   const updateFormAction = useCallback(
@@ -67,7 +68,7 @@ export const CreateProject = () => {
           description: projetDescription,
         };
 
-        await mutateAsync(payload);
+        await createProjectMutation(payload).unwrap();
 
         return {
           success: true,
@@ -90,7 +91,7 @@ export const CreateProject = () => {
         };
       }
     },
-    [mutateAsync],
+    [createProjectMutation],
   );
 
   const [state, updateAction, isActionPending] = useActionState(

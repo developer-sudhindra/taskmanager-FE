@@ -3,11 +3,15 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import QueryProvider from "./providers/QueryProvider.tsx";
+import { Provider } from "react-redux";
+import { store } from "./app/store";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryProvider>
+    {/* <QueryProvider> */}
+    <Provider store={store}>
       <App />
-    </QueryProvider>
+    </Provider>
+    {/* </QueryProvider> */}
   </StrictMode>,
 );

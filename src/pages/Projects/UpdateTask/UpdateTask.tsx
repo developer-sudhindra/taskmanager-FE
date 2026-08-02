@@ -5,21 +5,27 @@ import { Textarea } from "../../../shared/ui/Textarea/Textarea";
 import { Select } from "../../../shared/ui/Select/Select";
 import { PageTitle } from "../../../shared/ui/PageTitle/PageTitle";
 import { useParams, useNavigate } from "react-router-dom";
+import { skipToken } from "@reduxjs/toolkit/query/react";
 
 import {
-  useGetOneTask,
-  useUpdateTask,
-  useDeleteTask,
-} from "../../../hooks/useTasks";
+  useGetOneTaskQuery,
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from "../../../features/tasks/tasksApi";
 
 export const UpdateTask = () => {
   const { taskId } = useParams();
   const navigate = useNavigate();
 
-  const { mutateAsync: updateTaskMutation, isPending: isUpdating } =
-    useUpdateTask();
-  const { data: taskData, isLoading } = useGetOneTask(taskId);
-  const { mutate: deleteTaskMutate, isPending: isDeleting } = useDeleteTask();
+  const {
+    data: taskData,
+    isLoading,
+    error,
+  } = useGetOneTaskQuery(taskId ?? skipToken);
+
+  const [deleteTaskMutate, { isLoading: isDeleting }] = useDeleteTaskMutation();
+  const [updateTaskMutation, { isLoading: isUpdating }] =
+    useUpdateTaskMutation();
 
   const [task, setTask] = useState<any>(null);
 
@@ -45,7 +51,7 @@ export const UpdateTask = () => {
       labels: [{ name: "New update Label" }],
     };
     try {
-      await updateTaskMutation({ taskId, payload: updatedTask });
+      await updateTaskMutation({ taskId, payload: updatedTask }).unwrap();
       navigate(-1);
     } catch (error) {
       console.error("Failed to update task", error);
