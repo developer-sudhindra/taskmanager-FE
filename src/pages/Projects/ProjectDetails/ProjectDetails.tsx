@@ -20,6 +20,10 @@ export const ProjectDetails = () => {
     navigate(`/projects/${projectId}/tasks/create`);
   };
 
+  const redirectToAddMember = () => {
+    navigate(`/projects/${projectId}/project-members`);
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -30,9 +34,14 @@ export const ProjectDetails = () => {
         <Button variant="outline" onClick={redirectToProjects}>
           Go Back
         </Button>
-        <Button variant="primary" onClick={redirectToCreateTask}>
-          Create Task
-        </Button>
+        <div>
+          <Button variant="outline" onClick={redirectToAddMember}>
+            Add member
+          </Button>
+          <Button variant="primary" onClick={redirectToCreateTask}>
+            Create Task
+          </Button>
+        </div>
       </div>
       <div className="border border-surface rounded-md p-4 flex flex-row align-center justify-start gap-[30px]">
         <div>

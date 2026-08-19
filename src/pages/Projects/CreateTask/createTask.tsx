@@ -5,7 +5,6 @@ import { Textarea } from "../../../shared/ui/Textarea/Textarea";
 import { PageTitle } from "../../../shared/ui/PageTitle/PageTitle";
 import { useParams, useNavigate } from "react-router-dom";
 import { Select } from "../../../shared/ui/Select/Select";
-import { useCreateTask } from "../../../hooks/useTasks";
 import { useCreateTaskMutation } from "../../../features/tasks/tasksApi";
 
 type Priority = "LOW" | "MEDIUM" | "HIGH";

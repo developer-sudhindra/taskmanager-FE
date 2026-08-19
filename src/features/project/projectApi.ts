@@ -15,6 +15,13 @@ export const projectApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Projects"],
     }),
+    addProjectMember: builder.mutation<any, any>({
+      query: (payload) => ({
+        method: "POST",
+        url: "auth/invite-user",
+        body: payload,
+      }),
+    }),
     getProjectDetails: builder.query<any, string>({
       query: (projectId) => ({
         url: `project/${projectId}`,
@@ -32,4 +39,5 @@ export const {
   useCreateProjectMutation,
   useGetProjectDetailsQuery,
   usePrefetch,
+  useAddProjectMemberMutation,
 } = projectApi;

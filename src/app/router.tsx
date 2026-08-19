@@ -10,6 +10,7 @@ import { Login } from "../pages/Auth/Login/Login";
 import { Register } from "../pages/Auth/Register/Register";
 import { UpdatePassword } from "../pages/Auth/UpdatePassword/UpdatePassword";
 import { Settings } from "../pages/Settings/Settings";
+import { AddProjectMember } from "../pages/Projects/ProjectMember/AddProjectMember/AddProjectMember";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,14 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <UpdateTask />
+      </Layout>
+    ),
+  },
+  {
+    path: "/projects/:projectId/project-members",
+    element: (
+      <Layout>
+        <AddProjectMember />
       </Layout>
     ),
   },
