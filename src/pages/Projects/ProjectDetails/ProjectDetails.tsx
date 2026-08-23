@@ -20,7 +20,7 @@ export const ProjectDetails = () => {
     navigate(`/projects/${projectId}/tasks/create`);
   };
 
-  const redirectToAddMember = () => {
+  const redirectToUpdateProjectMembers = () => {
     navigate(`/projects/${projectId}/project-members`);
   };
 
@@ -35,8 +35,8 @@ export const ProjectDetails = () => {
           Go Back
         </Button>
         <div>
-          <Button variant="outline" onClick={redirectToAddMember}>
-            Add member
+          <Button variant="outline" onClick={redirectToUpdateProjectMembers}>
+            Update Project members
           </Button>
           <Button variant="primary" onClick={redirectToCreateTask}>
             Create Task

@@ -1,10 +1,11 @@
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useId } from "react";
 import { validateEmail } from "../../../shared/utils/utils";
 import { Input } from "../../../shared/ui/Input/Input";
 import { Button } from "../../../shared/ui/button/button";
-import { useNavigate } from "react-router-dom";
-import { FormWrapper } from "../FormWrapper/FormWrapper";
+import { useNavigate, Link } from "react-router-dom";
 import { loginService } from "./login.service";
+import { ErrorMessages } from "../../../shared/ui/ErrorMessage/ErrorMessage";
+
 interface LoginResponse {
   accessToken: string;
 }
@@ -117,6 +118,10 @@ export const Login = () => {
   const navigate = useNavigate();
   const [inputType, setInputType] = useState("password");
 
+  const baseId = useId();
+  const emailFieldId = `${baseId}-email`;
+  const passwordFieldId = `${baseId}-password`;
+
   const [state, updateActionHandler, isPending] = useActionState(
     updateLoginStateHandler,
     initialState,
@@ -130,66 +135,110 @@ export const Login = () => {
     if (state.success) {
       navigate("/projects");
     }
-  }, [state.success]);
+  }, [state.success, navigate, state.loginResponse]);
 
   return (
-    <>
-      <FormWrapper>
-        <h1>User Login</h1>
-        <form action={updateActionHandler}>
-          <div className="mb-[15px]">
-            <label htmlFor="email">Email id</label>
+    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 px-4 py-12">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-md border border-slate-100 p-8">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+            Welcome Back
+          </h2>
+          <p className="text-sm text-slate-500 mt-1">
+            Please enter your details to sign in
+          </p>
+        </div>
+
+        <form action={updateActionHandler} className="space-y-5">
+          <div className="flex flex-col">
+            <label
+              htmlFor={emailFieldId}
+              className="block text-sm font-semibold text-slate-700 mb-1.5"
+            >
+              Email id
+            </label>
             <Input
-              type={"email"}
-              id={"email"}
-              name={"email"}
+              type="email"
+              id={emailFieldId}
+              name="email"
               defaultValue={state.value.email}
+              disabled={isPending}
+              className={`w-full ${state.value.emailError ? "border-red-400 focus:ring-red-100" : ""}`}
             />
             {state.value.emailError.length > 0 && (
-              <span>{state.value.emailError}</span>
+              <ErrorMessages>{state.value.emailError}</ErrorMessages>
             )}
           </div>
-          <div className="mb-[15px]">
-            <label htmlFor="password" className="font-regular">
-              Password
-            </label>
-            <div className="flex ">
-              <Input
-                type={inputType}
-                id="password"
-                name="password"
-                defaultValue={state.value.password}
-              />
+
+          <div className="flex flex-col">
+            <div className="flex justify-between items-center mb-1.5">
+              <label
+                htmlFor={passwordFieldId}
+                className="text-sm font-semibold text-slate-700"
+              >
+                Password
+              </label>
+              <a
+                href="#forgot"
+                className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                Forgot password?
+              </a>
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <div className="flex-1">
+                <Input
+                  type={inputType}
+                  id={passwordFieldId}
+                  name="password"
+                  defaultValue={state.value.password}
+                  disabled={isPending}
+                />
+              </div>
               <Button
                 type="button"
                 variant="outline"
                 size="md"
+                disabled={isPending}
                 onClick={() =>
                   setInputType((previous) =>
                     previous === "password" ? "text" : "password",
                   )
                 }
               >
-                {inputType === "text" ? "T" : "P"}
+                {inputType === "text" ? "Hide" : "Show"}
               </Button>
             </div>
+            {state.value.passwordError.length > 0 && (
+              <ErrorMessages>{state.value.passwordError}</ErrorMessages>
+            )}
           </div>
-          {state.value.passwordError.length > 0 && (
-            <span>{state.value.passwordError}</span>
-          )}
-          <div>
+
+          <div className="pt-2">
             <Button
               disabled={isPending}
-              type={"submit"}
-              onClick={() => {}}
-              variant={"primary"}
+              type="submit"
+              variant="primary"
               size="full"
             >
-              Login
+              {isPending ? "Signing in..." : "Login"}
             </Button>
           </div>
         </form>
-      </FormWrapper>
-    </>
+
+        <div className="text-center mt-6 pt-5 border-t border-slate-100">
+          <p className="text-sm text-slate-600">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+            >
+              Create one now
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };

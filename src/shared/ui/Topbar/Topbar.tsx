@@ -1,7 +1,14 @@
 // src/shared/ui/Topbar.tsx
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
+import { Button } from "../button/button";
+import { useNavigate } from "react-router-dom";
 
 export default function Topbar() {
+  const navigate = useNavigate();
+  const redirectToLogin = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
   return (
     <header className="h-14 flex items-center justify-between px-4 border-b border-border bg-bg">
       {/* Left: Logo */}
@@ -17,8 +24,11 @@ export default function Topbar() {
       </div>
 
       {/* Right: Theme toggle */}
+
       <div>
-        <ThemeToggle />
+        <Button variant="outline" onClick={redirectToLogin}>
+          Logout
+        </Button>
       </div>
     </header>
   );

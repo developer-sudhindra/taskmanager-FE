@@ -11,6 +11,8 @@ import { Register } from "../pages/Auth/Register/Register";
 import { UpdatePassword } from "../pages/Auth/UpdatePassword/UpdatePassword";
 import { Settings } from "../pages/Settings/Settings";
 import { AddProjectMember } from "../pages/Projects/ProjectMember/AddProjectMember/AddProjectMember";
+import { UpdateGostPassword } from "../pages/Auth/UpdateGostPassword/UpdateGostPassword";
+import { ProjectMember } from "../pages/ProjetMember/ProjectMember";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +32,10 @@ const router = createBrowserRouter([
     element: <Register />,
   },
   {
+    path: "/update-gost-password/:emailId",
+    element: <UpdateGostPassword />,
+  },
+  {
     path: "/update-password",
     element: <UpdatePassword />,
   },
@@ -46,6 +52,22 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <ProjectDetails />
+      </Layout>
+    ),
+  },
+  {
+    path: "/projects/:projectId/project-members",
+    element: (
+      <Layout>
+        <ProjectMember />
+      </Layout>
+    ),
+  },
+  {
+    path: "/projects/:projectId/project-member/add",
+    element: (
+      <Layout>
+        <AddProjectMember />
       </Layout>
     ),
   },
@@ -70,14 +92,6 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <UpdateTask />
-      </Layout>
-    ),
-  },
-  {
-    path: "/projects/:projectId/project-members",
-    element: (
-      <Layout>
-        <AddProjectMember />
       </Layout>
     ),
   },
