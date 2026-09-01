@@ -1,16 +1,16 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "../../../shared/ui/button/button";
 import { Tasks } from "../Tasks/Tasks";
-import { useGetProjectDetails } from "../../../hooks/useProjects";
 import { useGetProjectDetailsQuery } from "../../../features/project/projectApi";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 export const ProjectDetails = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  // const [project, setProject] = useState(null);
-  const { data, isLoading } = useGetProjectDetailsQuery(projectId, {
-    skip: !!projectId,
-  });
+
+  const { data, isLoading, error } = useGetProjectDetailsQuery(
+    projectId ?? skipToken,
+  );
 
   const redirectToProjects = () => {
     navigate("/projects");
@@ -31,10 +31,13 @@ export const ProjectDetails = () => {
   return (
     <>
       <div className="mb-[30px] flex flex-row align-center justify-between">
-        <Button variant="outline" onClick={redirectToProjects}>
-          Go Back
-        </Button>
-        <div>
+        <div className="flex flex-row gap-4">
+          <Button variant="outline" onClick={redirectToProjects}>
+            Go Back
+          </Button>
+          <div className="mb-[15px]">{data?.name}</div>
+        </div>
+        <div className="flex flex-row gap-4">
           <Button variant="outline" onClick={redirectToUpdateProjectMembers}>
             Update Project members
           </Button>
@@ -43,17 +46,7 @@ export const ProjectDetails = () => {
           </Button>
         </div>
       </div>
-      <div className="border border-surface rounded-md p-4 flex flex-row align-center justify-start gap-[30px]">
-        <div>
-          <div className="text-[12px] text-[grey]">Name:</div>
-          <div className="mb-[15px]">{data?.name}</div>
-        </div>
-        <div>
-          <div className="text-[12px] text-[grey]">Status:</div>
-          <div className="mb-[15px]">{data?.status}</div>
-        </div>
-      </div>
-      <Tasks projectId={projectId} />
+      <Tasks projectId={projectId} swimlanes={data.swimlanes} />
     </>
   );
 };

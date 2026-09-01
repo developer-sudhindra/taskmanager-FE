@@ -29,6 +29,7 @@ export default function Topbar() {
         <Button variant="outline" onClick={redirectToLogin}>
           Logout
         </Button>
+        <ThemeToggle />
       </div>
     </header>
   );

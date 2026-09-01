@@ -19,7 +19,7 @@ export interface ITask {
   id: string;
   title: string;
   description: string;
-  status: "OPEN" | "IN_PROGRESS" | "DONE";
+  status: string;
   priority: "LOW" | "MEDIUM" | "HIGH";
   type: "FEATURE" | "BUG" | "TASK" | "DOCUMENTATION";
 }

@@ -13,14 +13,14 @@ import { Button } from "../../shared/ui/button/button";
 const getRoleBadgeStyles = (role: string) => {
   switch (role?.toUpperCase()) {
     case "OWNER":
-      return "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30";
+      return "bg-purple-500/10 text-purple-600 DARK:text-purple-400 border-purple-500/30";
     case "ADMIN":
-      return "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30";
+      return "bg-blue-500/10 text-blue-600 DARK:text-blue-400 border-blue-500/30";
     case "MEMBER":
-      return "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/30";
+      return "bg-green-500/10 text-green-600 DARK:text-green-400 border-green-500/30";
     case "VIEWER":
     default:
-      return "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/30";
+      return "bg-slate-500/10 text-slate-600 DARK:text-slate-400 border-slate-500/30";
   }
 };
 
@@ -133,7 +133,6 @@ export const ProjectMember = () => {
   }
 
   const removeMemberFromProject = async (memberId: string) => {
-    console.log(projectId, memberId);
     await removeMemberFromProjectMutation({ projectId, memberId }).unwrap();
   };
 

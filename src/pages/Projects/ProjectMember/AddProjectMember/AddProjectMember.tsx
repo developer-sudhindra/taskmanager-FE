@@ -103,7 +103,7 @@ export const AddProjectMember = () => {
             <div className="flex flex-col">
               <label
                 htmlFor={emailFieldId}
-                className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5"
+                className="block text-sm font-semibold text-slate-700 DARK:text-slate-300 mb-1.5"
               >
                 User Email
               </label>
@@ -122,7 +122,7 @@ export const AddProjectMember = () => {
             <div className="flex flex-col">
               <label
                 htmlFor={roleFieldId}
-                className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5"
+                className="block text-sm font-semibold text-slate-700 DARK:text-slate-300 mb-1.5"
               >
                 Role
               </label>

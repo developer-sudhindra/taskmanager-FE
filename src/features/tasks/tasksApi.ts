@@ -25,7 +25,7 @@ export const tasksApi = apiSlice.injectEndpoints({
     >({
       query: ({ taskId, payload }) => ({
         url: `tasks/${taskId}`,
-        method: "PUT",
+        method: "PATCH",
         body: payload,
       }),
       invalidatesTags: (result, error, { taskId }) => [

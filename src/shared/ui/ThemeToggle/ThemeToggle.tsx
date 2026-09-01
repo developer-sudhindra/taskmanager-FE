@@ -2,31 +2,30 @@ import { useEffect, useState } from "react";
 import { getTheme, updateTheme } from "./service";
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("theme") || "dark";
+    return localStorage.getItem("theme") || "DARK";
   });
 
   const toggle = () => {
-    const nextTheme = theme === "light" ? "dark" : "light";
-    console.log(theme, nextTheme, "adsf");
+    const nextTheme = theme === "LIGHT" ? "DARK" : "LIGHT";
     setTheme(nextTheme);
     updateTheme(nextTheme);
   };
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
+    if (theme === "DARK") {
+      root.classList.add("DARK");
     } else {
-      root.classList.remove("dark");
+      root.classList.remove("DARK");
     }
-    localStorage.setItem("theme", theme.toLowerCase());
+    localStorage.setItem("theme", theme.toUpperCase());
   }, [theme]);
 
   useEffect(() => {
     getTheme()
       .then((response) => response.json())
       .then((response) => {
-        setTheme(response.theme.toLowerCase());
+        setTheme(response.theme.toUpperCase());
       })
       .catch((err) => console.error("Failed to fetch database theme", err));
   }, []);
